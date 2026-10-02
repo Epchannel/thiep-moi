@@ -1,0 +1,21 @@
+<%- include('../partials/admin-header', { pageTitle, activePage, admin, csrfToken }) %>
+<div class="toolbar"><form class="filter-form" method="get">
+  <input name="search" value="<%= filters.search %>" placeholder="Tìm tên, slug, quan hệ...">
+  <select name="status"><option value="">Mọi trạng thái</option><option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>Đang hoạt động</option><option value="hidden" <%= filters.status === 'hidden' ? 'selected' : '' %>>Đã ẩn</option></select>
+  <select name="attendance"><option value="">Mọi RSVP</option><option value="unconfirmed" <%= filters.attendance === 'unconfirmed' ? 'selected' : '' %>>Chưa phản hồi</option><option value="attending" <%= filters.attendance === 'attending' ? 'selected' : '' %>>Sẽ tham dự</option><option value="declined" <%= filters.attendance === 'declined' ? 'selected' : '' %>>Không tham dự</option></select>
+  <button class="secondary-button" type="submit">Lọc</button>
+</form><a class="primary-button" href="/admin/guests/new">+ Thêm khách</a></div>
+<% if (notice) { %><div class="alert success"><%= notice %></div><% } %>
+<section class="panel table-panel">
+  <% if (!guests.length) { %><div class="empty-state"><h2>Chưa có khách mời</h2><p>Hãy tạo khách mời đầu tiên để nhận link thiệp riêng.</p></div><% } else { %>
+  <div class="table-scroll"><table><thead><tr><th>Khách mời</th><th>Link thiệp</th><th>RSVP</th><th>Lượt xem</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+  <% guests.forEach((guest) => { %><tr>
+    <td><div class="guest-cell"><div class="mini-avatar"><%= guest.fullName.split(/\s+/).slice(-1)[0].charAt(0).toUpperCase() %></div><div><strong><%= [guest.salutation, guest.fullName].filter(Boolean).join(' ') %></strong><small><%= guest.relationship || 'Chưa phân loại' %></small></div></div></td>
+    <td><div class="link-cell"><a href="/<%= guest.slug %>" target="_blank">/<%= guest.slug %></a><button type="button" class="copy-button" data-copy="/<%= guest.slug %>">Sao chép</button></div></td>
+    <td><span class="badge <%= guest.attendanceStatus %>"><%= attendanceLabel[guest.attendanceStatus] %></span><% if (guest.attendanceStatus === 'attending') { %><small><%= guest.partySize %> người</small><% } %></td>
+    <td><strong><%= guest.viewCount %></strong><small><%= formatDate(guest.lastViewedAt) %></small></td>
+    <td><span class="badge <%= guest.status %>"><%= guest.status === 'active' ? 'Hoạt động' : 'Đã ẩn' %></span></td>
+    <td class="actions"><a class="secondary-button compact" href="/admin/guests/<%= guest.id %>/edit">Sửa</a><form method="post" action="/admin/guests/<%= guest.id %>/delete" data-confirm="Xóa khách mời này? Lời chúc của họ sẽ được giữ lại."><input type="hidden" name="csrfToken" value="<%= csrfToken %>"><button class="danger-button compact" type="submit">Xóa</button></form></td>
+  </tr><% }) %></tbody></table></div><% } %>
+</section>
+<%- include('../partials/admin-footer') %>

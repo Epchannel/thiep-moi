@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow"><title><%= pageTitle %></title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="auth-body">
+  <main class="auth-card">
+    <a class="admin-brand centered" href="/"><span>G</span><strong>Graduation Admin</strong></a>
+    <h1>Tạo tài khoản đầu tiên</h1><p>Link thiết lập này chỉ sử dụng được một lần.</p>
+    <% if (error) { %><div class="alert error"><%= error %></div><% } %>
+    <form class="stack-form" action="/admin/setup" method="post">
+      <input type="hidden" name="token" value="<%= token %>">
+      <label>Tên đăng nhập<input name="username" minlength="3" maxlength="50" autocomplete="username" required autofocus></label>
+      <label>Mật khẩu<input type="password" name="password" minlength="10" autocomplete="new-password" required></label>
+      <label>Nhập lại mật khẩu<input type="password" name="confirmPassword" minlength="10" autocomplete="new-password" required></label>
+      <button class="primary-button" type="submit">Tạo tài khoản</button>
+    </form>
+  </main>
+</body>
+</html>

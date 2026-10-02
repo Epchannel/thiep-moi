@@ -1,0 +1,12 @@
+<%- include('../partials/admin-header', { pageTitle, activePage, admin, csrfToken }) %>
+<section class="stats-grid">
+  <article class="stat-card"><span>Tổng khách mời</span><strong><%= stats.guests %></strong><a href="/admin/guests">Xem danh sách</a></article>
+  <article class="stat-card"><span>Đã mở thiệp</span><strong><%= stats.viewed %></strong><a href="/admin/guests?status=active">Theo dõi</a></article>
+  <article class="stat-card"><span>Sẽ tham dự</span><strong><%= stats.attending %></strong><a href="/admin/guests?attendance=attending">Xem RSVP</a></article>
+  <article class="stat-card"><span>Lời chúc đã duyệt</span><strong><%= stats.approvedWishes %></strong><a href="/admin/wishes?status=approved">Quản lý</a></article>
+</section>
+<section class="panel onboarding">
+  <div><p class="eyebrow">BẮT ĐẦU</p><h2>Tạo thiệp cá nhân đầu tiên</h2><p>Thêm khách mời, hệ thống sẽ tự sinh đường dẫn riêng để bạn gửi cho họ.</p></div>
+  <a class="primary-button" href="/admin/guests/new">+ Thêm khách mời</a>
+</section>
+<%- include('../partials/admin-footer') %>

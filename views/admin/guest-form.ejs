@@ -1,0 +1,26 @@
+<%- include('../partials/admin-header', { pageTitle, activePage, admin, csrfToken }) %>
+<% if (errors.length) { %><div class="alert error"><strong>Vui lòng kiểm tra:</strong><ul><% errors.forEach((error) => { %><li><%= error %></li><% }) %></ul></div><% } %>
+<form class="panel guest-form" method="post" enctype="multipart/form-data" action="<%= isEdit ? '/admin/guests/' + guest.id : '/admin/guests' %>">
+  <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+  <div class="form-section"><h2>Thông tin khách mời</h2><div class="form-grid">
+    <label>Họ và tên *<input id="full-name" name="fullName" value="<%= guest.fullName %>" maxlength="100" required autofocus></label>
+    <label>Cách xưng hô<input name="salutation" value="<%= guest.salutation %>" maxlength="30" placeholder="Cô, Thầy, Anh, Chị..."></label>
+    <label>Quan hệ<input name="relationship" value="<%= guest.relationship %>" maxlength="80" placeholder="Giảng viên, gia đình, bạn bè..."></label>
+    <label>Số điện thoại<input name="phone" value="<%= guest.phone %>" maxlength="30" inputmode="tel"></label>
+  </div></div>
+  <div class="form-section"><h2>Thiệp cá nhân</h2><div class="form-grid">
+    <label class="wide">Đường dẫn riêng *<div class="slug-input"><span>/</span><input id="slug" name="slug" value="<%= guest.slug %>" maxlength="80" required></div><small>Chỉ gồm chữ thường, số và dấu gạch ngang.</small></label>
+    <% if (guest.avatarUrl) { %><div class="wide avatar-preview"><img src="<%= guest.avatarUrl %>" alt="Avatar hiện tại"><div><strong>Avatar hiện tại</strong><label class="check-label"><input type="checkbox" name="removeAvatar" value="1"> Xóa avatar này</label></div></div><% } %>
+    <label class="wide">Tải avatar lên<input name="avatarFile" type="file" accept="image/jpeg,image/png,image/webp"><small>Khuyên dùng. Hỗ trợ JPG, PNG, WebP, tối đa 5 MB. Ảnh sẽ được lưu ổn định trên server.</small></label>
+    <label class="wide">Hoặc URL ảnh công khai<input name="avatarUrl" value="<%= guest.avatarUrl && !guest.avatarUrl.startsWith('/uploads/avatars/') ? guest.avatarUrl : '' %>" maxlength="2048" type="url" placeholder="https://..."><small>Hỗ trợ URL dài tối đa 2.048 ký tự. Link CDN Facebook có thể hết hạn sau thời gian ghi trong tham số <code>oe</code>.</small></label>
+    <label class="wide">Lời nhắn riêng<textarea name="personalMessage" maxlength="1000" rows="4" placeholder="Rất mong cô dành thời gian đến chung vui cùng em..."><%= guest.personalMessage %></textarea></label>
+  </div></div>
+  <div class="form-section"><h2>Quản lý</h2><div class="form-grid">
+    <label>Trạng thái thiệp<select name="status"><option value="active" <%= guest.status === 'active' ? 'selected' : '' %>>Hoạt động</option><option value="hidden" <%= guest.status === 'hidden' ? 'selected' : '' %>>Ẩn thiệp</option></select></label>
+    <label>RSVP<select name="attendanceStatus"><option value="unconfirmed" <%= guest.attendanceStatus === 'unconfirmed' ? 'selected' : '' %>>Chưa phản hồi</option><option value="attending" <%= guest.attendanceStatus === 'attending' ? 'selected' : '' %>>Sẽ tham dự</option><option value="declined" <%= guest.attendanceStatus === 'declined' ? 'selected' : '' %>>Không tham dự</option></select></label>
+    <label>Số người tham dự<input type="number" name="partySize" value="<%= guest.partySize %>" min="1" max="20"></label>
+    <label class="wide">Ghi chú nội bộ<textarea name="note" maxlength="1000" rows="3"><%= guest.note %></textarea></label>
+  </div></div>
+  <div class="form-actions"><a class="secondary-button" href="/admin/guests">Hủy</a><button class="primary-button" type="submit"><%= isEdit ? 'Lưu thay đổi' : 'Tạo khách mời' %></button></div>
+</form>
+<%- include('../partials/admin-footer') %>

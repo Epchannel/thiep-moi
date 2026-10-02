@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title><%= pageTitle %> | Graduation Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="admin-body">
+  <aside class="sidebar">
+    <a class="admin-brand" href="/admin"><span>G</span><strong>Graduation</strong></a>
+    <nav class="admin-nav" aria-label="Quản trị">
+      <a class="<%= activePage === 'dashboard' ? 'active' : '' %>" href="/admin">Tổng quan</a>
+      <a class="<%= activePage === 'guests' ? 'active' : '' %>" href="/admin/guests">Khách mời</a>
+      <a class="<%= activePage === 'wishes' ? 'active' : '' %>" href="/admin/wishes">Lời chúc</a>
+      <a href="/" target="_blank" rel="noopener">Xem trang chủ ↗</a>
+    </nav>
+    <div class="sidebar-footer">
+      <small>Đang đăng nhập</small>
+      <strong><%= admin.username %></strong>
+      <form action="/admin/logout" method="post">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
+        <button class="link-button" type="submit">Đăng xuất</button>
+      </form>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">GRADUATION 2026</p>
+        <h1><%= pageTitle %></h1>
+      </div>
+    </header>

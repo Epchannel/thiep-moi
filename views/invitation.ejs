@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %></title>
+  <meta name="description" content="Trân trọng kính mời <%= [guest.salutation, guest.fullName].filter(Boolean).join(' ') %> tham dự và chụp hình kỷ niệm Lễ Tốt Nghiệp 2026. Lưu giữ khoảnh khắc thanh xuân rực rỡ!">
+  <meta property="og:title" content="Thiệp mời tốt nghiệp dành cho <%= guest.fullName %>">
+  <meta property="og:description" content="Hẹn gặp bạn tại ngày lễ tốt nghiệp đáng nhớ của mình.">
+  <% if (guest.avatarUrl) { %><meta property="og:image" content="<%= guest.avatarUrl %>"><% } %>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Charm:wght@400;700&family=Cinzel:wght@700;800;900&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Core index.css for total visual alignment + custom invitation styles -->
+  <link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/invitation.css">
+</head>
+<body data-slug="<%= guest.slug %>">
+
+  <!-- Dynamic Fixed School Vector Outline Layer (Idea 1 & 4) -->
+  <div class="school-vector-bg" id="school-vector-bg">
+    <div class="spotlight-beam"></div>
+  </div>
+
+  <!-- Plan 4: 3D Royal Unboxing Envelope Modal Overlay -->
+  <div class="envelope-overlay" id="envelope-overlay">
+    <!-- Ambient Gold Rays & Shimmer Background -->
+    <div class="env-sunburst-rays"></div>
+    <div class="env-sparkle-container">
+      <div class="env-sparkle sp-1"></div>
+      <div class="env-sparkle sp-2"></div>
+      <div class="env-sparkle sp-3"></div>
+      <div class="env-sparkle sp-4"></div>
+      <div class="env-sparkle sp-5"></div>
+      <div class="env-sparkle sp-6"></div>
+    </div>
+
+    <div class="envelope-3d-scene" id="envelope-3d-scene">
+      <div class="envelope-3d-card" id="envelope-3d-card">
+        <!-- Back flap lining with luxury silk texture pattern -->
+        <div class="env-back">
+          <div class="env-inner-pattern"></div>
+        </div>
+
+        <!-- Tucked Invitation Card -->
+        <div class="env-letter" id="env-letter">
+          <div class="letter-gold-frame"></div>
+          <div class="stamp"><i class="fas fa-graduation-cap"></i></div>
+          <span class="letter-tag">✦ THƯ MỜI TỐT NGHIỆP 2026 ✦</span>
+          <h3 class="letter-salutation">Kính mời <%= guest.salutation || 'Bạn' %></h3>
+          <h2 class="letter-name"><%= guest.fullName %></h2>
+          <p class="letter-desc">Trân trọng kính mời <%= guest.salutation || 'bạn' %> cùng đến tham dự & lưu giữ khoảnh khắc Lễ Tốt Nghiệp kỹ sư rạng rỡ nhất.</p>
+          <div class="letter-accent-bar"></div>
+        </div>
+
+        <!-- Front Pocket with Metallic Gold Trim -->
+        <div class="env-pocket">
+          <div class="env-pocket-gold-trim"></div>
+          <div class="env-emboss-logo">HUMG 2026</div>
+        </div>
+
+        <!-- 3D Top Flap with Wax Seal & Satin Ribbon -->
+        <div class="env-flap-3d" id="env-flap-3d">
+          <div class="env-satin-ribbon"></div>
+          <div class="wax-seal" id="wax-seal" title="Bấm vào con dấu để mở thiệp">
+            <div class="wax-seal-ring"></div>
+            <div class="wax-seal-inner">
+              <i class="fas fa-graduation-cap"></i>
+              <span>HUMG</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shockwave & Light Burst Engine -->
+        <div class="env-shockwave"></div>
+        <div class="env-light-burst"></div>
+      </div>
+
+      <!-- Action Hint & Button -->
+      <div class="envelope-action-bar">
+        <button type="button" class="btn-primary open-letter-btn" id="open-envelope-btn">
+          <i class="fas fa-envelope-open-text"></i> MỞ THIỆP TỐT NGHIỆP
+        </button>
+        <p class="envelope-hint"><i class="fas fa-sparkles"></i> Nhấp vào con dấu vàng hoặc bấm nút để mở thiệp</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Ambient Glowing Orbs Background -->
+  <div class="bg-ambient-orb orb-1"></div>
+  <div class="bg-ambient-orb orb-2"></div>
+  <div class="bg-ambient-orb orb-3"></div>
+
+  <!-- Dynamic Particle Canvas Background -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span>GRADUATION 2026</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#hero">Thiệp Mời</a></li>
+        <li><a href="#details">Thông Tin</a></li>
+        <li><a href="#timeline">Lịch Trình</a></li>
+        <li><a href="#wishes">Lời Chúc</a></li>
+        <li><a href="#rsvp">Xác Nhận</a></li>
+        <li><a href="#location">Địa Điểm</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="music-btn" id="music-toggle" type="button" title="Bật nhạc nền" aria-label="Bật nhạc nền" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M11 5 6.8 8.5H3.5v7h3.3L11 19V5Z"></path>
+            <path d="m15.5 10 5 5"></path>
+            <path d="m20.5 10-5 5"></path>
+          </svg>
+        </button>
+        <a href="#rsvp" class="btn-primary"><i class="fas fa-heart"></i> Phản Hồi Ngay</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section Personalized -->
+  <section class="hero-section" id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-text-content">
+          <span class="hero-tag"><i class="fas fa-envelope-open-text"></i> THIỆP MỜI DÀNH RIÊNG</span>
+          
+          <h2 class="salutation-text">
+            Kính mời <%= guest.salutation || 'Bạn' %>
+          </h2>
+          
+          <h1 class="hero-title-main invite-name">
+            <%= guest.fullName %>
+          </h1>
+
+          <% if (guest.relationship) { %>
+            <div class="relationship-badge">
+              <i class="fas fa-heart"></i> <%= guest.relationship %>
+            </div>
+          <% } %>
+
+          <div class="personal-message-box">
+            <i class="fas fa-quote-left quote-icon"></i>
+            <p>
+              <%= guest.personalMessage || 'Mình rất mong bạn sẽ dành thời gian đến tham dự và cùng lưu giữ những khoảnh khắc đáng nhớ trong ngày tốt nghiệp kỹ sư của mình!' %>
+            </p>
+          </div>
+
+          <!-- RSVP Status Indicator Badge -->
+          <div class="rsvp-status-badge <%= guest.attendanceStatus %>" id="hero-status-indicator">
+            <% if (guest.attendanceStatus === 'attending') { %>
+              <i class="fas fa-check-circle"></i> Đã xác nhận tham dự (<%= guest.partySize || 1 %> người)
+            <% } else if (guest.attendanceStatus === 'declined') { %>
+              <i class="fas fa-times-circle"></i> Đã báo không thể tham dự
+            <% } else { %>
+              <i class="fas fa-clock"></i> Chưa phản hồi tham dự
+            <% } %>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="hero-action-buttons">
+            <a href="#rsvp" class="btn-primary">
+              <i class="fas fa-paper-plane"></i> Gửi Phản Hồi Tham Dự
+            </a>
+            <button type="button" class="btn-secondary" id="share-invite-btn" title="Sao chép liên kết thiệp mời">
+              <i class="fas fa-share-alt"></i> Chia Sẻ Thiệp
+            </button>
+          </div>
+
+          <!-- Countdown Timer -->
+          <div class="countdown-box">
+            <div class="time-unit">
+              <span class="time-val" id="days">00</span>
+              <span class="time-label">Ngày</span>
+            </div>
+            <div class="time-unit">
+              <span class="time-val" id="hours">00</span>
+              <span class="time-label">Giờ</span>
+            </div>
+            <div class="time-unit">
+              <span class="time-val" id="minutes">00</span>
+              <span class="time-label">Phút</span>
+            </div>
+            <div class="time-unit">
+              <span class="time-val" id="seconds">00</span>
+              <span class="time-label">Giây</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="portrait-circle-bg"></div>
+          <img id="guest-avatar" src="<%= guest.avatarUrl || '/grad_student_portrait_1790763953897.png' %>" data-fallback="/grad_student_portrait_1790763953897.png" alt="Ảnh đại diện của <%= guest.fullName %>" class="portrait-img">
+          
+          <div class="glass-card hero-badge-float">
+            <i class="fas fa-user-check"></i>
+            <div>
+              <strong style="display:block; color:var(--accent-gold); font-size:0.95rem;">KHÁCH MỜI DÀNH RIÊNG</strong>
+              <small style="color:var(--text-dim);"><%= guest.fullName %></small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Info Bar & Calendar Button -->
+      <div class="glass-card quick-info-bar" id="details">
+        <div class="info-grid">
+          <div class="info-item">
+            <i class="fas fa-calendar-day"></i>
+            <h4>NĂM THÁNG</h4>
+            <p>10 Tháng 10, 2026</p>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-clock"></i>
+            <h4>THỜI GIAN</h4>
+            <p>07:30 AM - 17:30 PM</p>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <h4>ĐỊA ĐIỂM</h4>
+            <p>Hội Trường Đại Học Kỷ Yếu</p>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-tshirt"></i>
+            <h4>DRESS CODE</h4>
+            <p>Áo Dài / Veston / Lịch Sự</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section class="timeline-section" id="timeline">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-subtitle">Schedule</span>
+        <h2 class="section-main-title">LỊCH TRÌNH BUỔI CHỤP KỶ YẾU</h2>
+      </div>
+
+      <div class="timeline-container">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="glass-card timeline-content">
+            <span class="timeline-time">07:30 - 08:30</span>
+            <h3>Tập Trung & Chuẩn Bị Trang Phục</h3>
+            <p>Tập trung tại sảnh A1, mặc áo cử nhân, trang điểm và chuẩn bị đạo cụ chụp ảnh.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="glass-card timeline-content">
+            <span class="timeline-time">08:30 - 11:30</span>
+            <h3>Chụp Ảnh Cùng Lớp & Gia Đình</h3>
+            <p>Chụp tập thể áo cử nhân tại giảng đường, trao bằng tốt nghiệp kỷ niệm cùng thầy cô và gia đình.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wishes Wall Section (Unified with Main Page) -->
+  <section class="wishes-section" id="wishes">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-subtitle">Best Wishes</span>
+        <h2 class="section-main-title">BỨC TƯỜNG LỜI CHÚC</h2>
+
+        <!-- Wish Sorting Controls -->
+        <div class="wishes-sort-tabs">
+          <button type="button" class="sort-tab active" data-sort="newest">
+            <i class="fas fa-clock"></i> Mới Nhất
+          </button>
+          <button type="button" class="sort-tab" data-sort="popular">
+            <i class="fas fa-heart"></i> Yêu Thích Nhất
+          </button>
+        </div>
+      </div>
+
+      <div class="wishes-grid" id="wishes-grid" aria-live="polite">
+        <p class="wishes-state">Đang tải lời chúc...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Personalized RSVP Section -->
+  <section class="rsvp-section" id="rsvp">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-subtitle">Please Respond</span>
+        <h2 class="section-main-title">XÁC NHẬN THAM DỰ DÀNH CHO <%= guest.fullName.toUpperCase() %></h2>
+      </div>
+
+      <div class="glass-card rsvp-wrapper">
+        <form class="rsvp-form" id="invitation-rsvp">
+          <div class="form-group">
+            <label><i class="fas fa-question-circle"></i> Trạng thái tham dự của <%= guest.salutation || 'bạn' %> *</label>
+            <div class="radio-custom-group">
+              <label class="radio-card">
+                <input type="radio" name="attendanceStatus" value="attending" <%= guest.attendanceStatus === 'attending' ? 'checked' : '' %> required>
+                <div class="radio-content">
+                  <i class="fas fa-check-circle"></i>
+                  <div>
+                    <strong style="display:block;">Sẽ Tham Dự</strong>
+                    <small style="font-size:0.8rem; opacity:0.8;">Hẹn gặp bạn tại buổi lễ!</small>
+                  </div>
+                </div>
+              </label>
+
+              <label class="radio-card">
+                <input type="radio" name="attendanceStatus" value="declined" <%= guest.attendanceStatus === 'declined' ? 'checked' : '' %>>
+                <div class="radio-content">
+                  <i class="fas fa-times-circle"></i>
+                  <div>
+                    <strong style="display:block;">Rất Tiếc Không Thể</strong>
+                    <small style="font-size:0.8rem; opacity:0.8;">Gửi lời chúc từ xa</small>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="party-size-group">
+            <label for="partySize"><i class="fas fa-users"></i> Số người tham dự cùng (bao gồm cả bạn)</label>
+            <input type="number" id="partySize" name="partySize" class="form-control" min="1" max="20" value="<%= guest.partySize || 1 %>">
+          </div>
+
+          <div class="form-group">
+            <label for="message"><i class="fas fa-heart"></i> Lời chúc dành cho Tân Kỹ Sư</label>
+            <textarea id="message" name="message" class="form-control" placeholder="Viết những lời chúc chân thành nhất dành cho tân kỹ sư..." maxlength="1000"></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:16px;">
+            <i class="fas fa-paper-plane"></i> GỬI PHẢN HỒI THAM DỰ
+          </button>
+          <p class="form-message" id="rsvp-message" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location & Map Section -->
+  <section class="location-section" id="location">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-subtitle">Location & Campus</span>
+        <h2 class="section-main-title">ĐỊA ĐIỂM & CHỈ ĐƯỜNG</h2>
+      </div>
+
+
+      <!-- Idea 3: Location Card with Photo Watermark Background -->
+      <div class="glass-card location-grid location-watermark-card">
+        <div class="location-info">
+          <h3><i class="fas fa-university"></i> Hội Trường Đại Học Mỏ - Địa Chất</h3>
+          <p class="location-address"><i class="fas fa-map-pin"></i> Số 18 Phố Viên, Đức Thắng, Bắc Từ Liêm, Hà Nội</p>
+          <p class="location-desc">Hội trường lớn Khu A là nơi diễn ra lễ trao bằng tốt nghiệp kỹ sư và chụp hình kỷ niệm cùng Thầy Cô, gia đình và bạn bè.</p>
+          
+          <div class="location-buttons">
+            <a href="https://maps.google.com/?q=Trường+Đại+Học+Mỏ+Địa+Chất+Khu+A" target="_blank" rel="noopener noreferrer" class="btn-primary">
+              <i class="fas fa-directions"></i> Mở Google Maps Chỉ Đường
+            </a>
+          </div>
+        </div>
+
+        <div class="map-embed-wrapper">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d821.8229347595413!2d105.77339031835143!3d21.07169569277384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3134552defbed8e9%3A0x1584f79c805eb017!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBN4buPIC0gxJDhu4thIGNo4bqldA!5e1!3m2!1svi!2s!4v1790937150018!5m2!1svi!2s" width="100%" height="280" style="border:0; border-radius:14px;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 Graduation Day. Designed with ❤️ for Thượng Tiên.</p>
+      <div class="footer-socials">
+        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" title="TikTok"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <audio id="background-music" src="/nhac-nen.mp3" autoplay loop preload="auto" playsinline></audio>
+
+  <!-- Main JavaScript Engine (Canvas, Parallax, Cursor, Countdown, Wishes) + Invitation Logic -->
+  <script src="/background-music.js"></script>
+  <script src="/main.js"></script>
+  <script src="/invitation.js"></script>
+</body>
+</html>
