@@ -1818,14 +1818,34 @@ body.mobile-menu-lock {
 
   .hero-badge-float {
     position: absolute;
-    bottom: -15px;
+    bottom: -20px;
     left: 50% !important;
     right: auto !important;
     transform: translateX(-50%) !important;
-    max-width: calc(100vw - 32px) !important;
-    width: max-content;
-    box-sizing: border-box;
-    margin: 0 auto;
+    width: max-content !important;
+    max-width: calc(100vw - 36px) !important;
+    padding: 10px 16px !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+    z-index: 5;
+  }
+
+  .hero-badge-float div {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .hero-badge-float strong {
+    font-size: 0.85rem !important;
+    white-space: nowrap;
+  }
+
+  .hero-badge-float small {
+    font-size: 0.75rem !important;
+    display: block;
+    line-height: 1.25;
+    white-space: normal;
+    word-break: break-word;
   }
 
   .hero-badge-float.reveal-hidden {
@@ -2026,6 +2046,24 @@ body.mobile-menu-lock {
   .portrait-circle-bg, .portrait-img {
     width: 260px;
     height: 260px;
+  }
+
+  .hero-badge-float {
+    bottom: -22px !important;
+    padding: 8px 12px !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  .hero-badge-float i {
+    font-size: 1.3rem !important;
+  }
+
+  .hero-badge-float strong {
+    font-size: 0.78rem !important;
+  }
+
+  .hero-badge-float small {
+    font-size: 0.68rem !important;
   }
 
   .info-grid {
