@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('music-toggle');
   if (!audio) return;
 
-  audio.volume = 0.8;
+  audio.volume = 0.5;
   let userPaused = false;
   let interactionFallbackActive = true;
 

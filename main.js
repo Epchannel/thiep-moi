@@ -53,24 +53,27 @@ function initEnvelopeModal() {
 
   if (!overlay || !envCard) return;
 
-  // 3D Parallax Tilt Effect on Mouse Move
-  overlay.addEventListener('mousemove', (e) => {
-    if (envCard.classList.contains('opening')) return;
-    const rect = envCard.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const rotateX = -((e.clientY - centerY) / rect.height) * 18;
-    const rotateY = ((e.clientX - centerX) / rect.width) * 18;
+  // 3D Parallax Tilt Effect on Mouse Move (Desktop only)
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth <= 768;
+  if (!isTouchDevice) {
+    overlay.addEventListener('mousemove', (e) => {
+      if (envCard.classList.contains('opening')) return;
+      const rect = envCard.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const rotateX = -((e.clientY - centerY) / rect.height) * 18;
+      const rotateY = ((e.clientX - centerX) / rect.width) * 18;
 
-    envCard.style.animation = 'none';
-    envCard.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
-  });
+      envCard.style.animation = 'none';
+      envCard.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+    });
 
-  overlay.addEventListener('mouseleave', () => {
-    if (envCard.classList.contains('opening')) return;
-    envCard.style.animation = 'floatEnvelope 5s ease-in-out infinite alternate';
-    envCard.style.transform = '';
-  });
+    overlay.addEventListener('mouseleave', () => {
+      if (envCard.classList.contains('opening')) return;
+      envCard.style.animation = 'floatEnvelope 5s ease-in-out infinite alternate';
+      envCard.style.transform = '';
+    });
+  }
 
   // Unboxing Handler
   let isOpening = false;
@@ -109,16 +112,18 @@ function initParticleEngine() {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
+  const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth <= 768;
+
   let width = (canvas.width = window.innerWidth);
   let height = (canvas.height = window.innerHeight);
 
   window.addEventListener('resize', () => {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
-  });
+  }, { passive: true });
 
   const particles = [];
-  const particleCount = 60;
+  const particleCount = isMobile ? 20 : 45;
   const colors = ['#ffd200', '#ffffff', '#7aaeff', '#ffa800', '#d32f2f'];
 
   class Particle {
@@ -129,14 +134,14 @@ function initParticleEngine() {
     reset() {
       this.x = Math.random() * width;
       this.y = Math.random() * height;
-      this.size = Math.random() * 3.5 + 1;
+      this.size = Math.random() * (isMobile ? 2.2 : 3.2) + 1;
       this.color = colors[Math.floor(Math.random() * colors.length)];
-      this.speedY = Math.random() * 0.9 + 0.3;
-      this.speedX = (Math.random() - 0.5) * 0.6;
-      this.opacity = Math.random() * 0.75 + 0.25;
+      this.speedY = Math.random() * 0.8 + 0.2;
+      this.speedX = (Math.random() - 0.5) * 0.5;
+      this.opacity = Math.random() * 0.7 + 0.2;
       this.pulseSpeed = Math.random() * 0.03 + 0.01;
       this.rotation = Math.random() * 360;
-      this.rotationSpeed = (Math.random() - 0.5) * 2.5;
+      this.rotationSpeed = (Math.random() - 0.5) * 2;
       this.isStar = Math.random() > 0.6;
     }
 
@@ -144,7 +149,6 @@ function initParticleEngine() {
       this.y -= this.speedY;
       this.x += this.speedX;
       this.rotation += this.rotationSpeed;
-      this.opacity += Math.sin(Date.now() * 0.003) * this.pulseSpeed;
 
       if (this.y < -15) {
         this.y = height + 15;
@@ -158,11 +162,13 @@ function initParticleEngine() {
       ctx.rotate((this.rotation * Math.PI) / 180);
       ctx.globalAlpha = Math.max(0.1, Math.min(1, this.opacity));
       ctx.fillStyle = this.color;
-      ctx.shadowBlur = 12;
-      ctx.shadowColor = this.color;
+
+      if (!isMobile) {
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = this.color;
+      }
 
       if (this.isStar) {
-        // Draw 4-point gold sparkle star
         ctx.beginPath();
         for (let i = 0; i < 4; i++) {
           ctx.lineTo(Math.cos((i * Math.PI) / 2) * this.size * 2, Math.sin((i * Math.PI) / 2) * this.size * 2);
@@ -171,19 +177,18 @@ function initParticleEngine() {
         ctx.closePath();
         ctx.fill();
       } else {
-        // Draw small confetti square
         ctx.fillRect(-this.size, -this.size, this.size * 2, this.size * 2);
       }
       ctx.restore();
     }
   }
 
-  // Draw background spotlight light beams
   function drawLightBeams() {
+    if (isMobile) return;
     ctx.save();
     const grad = ctx.createRadialGradient(width / 2, 0, 50, width / 2, 0, height * 0.8);
-    grad.addColorStop(0, 'rgba(8, 85, 255, 0.25)');
-    grad.addColorStop(0.5, 'rgba(255, 210, 0, 0.05)');
+    grad.addColorStop(0, 'rgba(8, 85, 255, 0.2)');
+    grad.addColorStop(0.5, 'rgba(255, 210, 0, 0.04)');
     grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
     ctx.fillStyle = grad;
@@ -202,10 +207,10 @@ function initParticleEngine() {
   function animate() {
     ctx.clearRect(0, 0, width, height);
     drawLightBeams();
-    particles.forEach((p) => {
-      p.update();
-      p.draw();
-    });
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
+    }
     requestAnimationFrame(animate);
   }
 
@@ -244,14 +249,70 @@ function initCountdownTimer() {
   setInterval(updateTimer, 1000);
 }
 
-/* --- 3. Navbar Glassmorphism Scroll Effect --- */
+/* --- 3. Navbar Glassmorphism Scroll & Mobile Menu Engine --- */
 function initNavbarScroll() {
   const navbar = document.querySelector('.navbar');
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  const navLinks = document.getElementById('nav-links') || document.querySelector('.nav-links');
+
+  if (!navbar) return;
+
+  // Scroll handler for navbar background
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        if (window.scrollY > 40) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Mobile Hamburger Menu Handler
+  if (!toggleBtn || !navLinks) return;
+
+  // Create backdrop element dynamically if not present
+  let backdrop = document.querySelector('.mobile-menu-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.className = 'mobile-menu-backdrop';
+    document.body.appendChild(backdrop);
+  }
+
+  function toggleMobileMenu(open) {
+    const shouldOpen = open !== undefined ? open : !navLinks.classList.contains('mobile-open');
+    toggleBtn.classList.toggle('is-active', shouldOpen);
+    navLinks.classList.toggle('mobile-open', shouldOpen);
+    backdrop.classList.toggle('is-visible', shouldOpen);
+    toggleBtn.setAttribute('aria-expanded', String(shouldOpen));
+    document.body.classList.toggle('mobile-menu-lock', shouldOpen);
+  }
+
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMobileMenu();
+  });
+
+  backdrop.addEventListener('click', () => {
+    toggleMobileMenu(false);
+  });
+
+  // Close menu when clicking any nav link
+  navLinks.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      toggleMobileMenu(false);
+    });
+  });
+
+  // Close menu on ESC key press
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navLinks.classList.contains('mobile-open')) {
+      toggleMobileMenu(false);
     }
   });
 }
@@ -494,7 +555,7 @@ function triggerSubmitConfetti() {
 
 /* --- 5. Scroll Reveal Animations (Xuất hiện mượt mà khi cuộn trang) --- */
 function initScrollRevealAnimations() {
-  const revealElements = document.querySelectorAll('.timeline-item, .info-item, .glass-card, .section-title, .hero-text-content, .hero-visual');
+  const revealElements = document.querySelectorAll('.timeline-item, .info-item, .glass-card:not(.hero-badge-float), .section-title, .hero-text-content, .hero-visual');
 
   revealElements.forEach((el) => {
     el.classList.add('reveal-hidden');
@@ -519,6 +580,9 @@ function initScrollRevealAnimations() {
 
 /* --- 7. 3D Parallax Tilt & Mouse Hover Tracking --- */
 function init3DParallaxEffects() {
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth <= 768;
+  if (isTouchDevice) return;
+
   const cards = document.querySelectorAll('.glass-card, .time-unit, .portrait-img');
 
   cards.forEach((card) => {
@@ -552,16 +616,26 @@ function init3DParallaxEffects() {
     if (schoolVector) schoolVector.style.transform = `translate3d(${-moveX * 0.8}px, ${-moveY * 0.8}px, 0)`;
   });
 
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    if (schoolVector) {
-      const scrollY = window.scrollY;
-      schoolVector.style.opacity = Math.max(0.08, 0.22 - scrollY * 0.0002);
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        if (schoolVector) {
+          const scrollY = window.scrollY;
+          schoolVector.style.opacity = Math.max(0.08, 0.22 - scrollY * 0.0002);
+        }
+        ticking = false;
+      });
+      ticking = true;
     }
-  });
+  }, { passive: true });
 }
 
 /* --- 8. Custom Glowing Golden Cursor Follower --- */
 function initCustomGlowCursor() {
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth <= 768;
+  if (isTouchDevice) return;
+
   const cursor = document.createElement('div');
   cursor.className = 'glow-cursor-follower';
   document.body.appendChild(cursor);

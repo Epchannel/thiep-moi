@@ -5,6 +5,7 @@
 | Biến | Mặc định | Mô tả |
 |---|---|---|
 | `PORT` | `3000` | Cổng HTTP |
+| `HOST` | `0.0.0.0` | Địa chỉ lắng nghe; dùng `127.0.0.1` khi chạy sau Cloudflare Tunnel trên cùng máy |
 | `NODE_ENV` | development | Đặt `production` để bật secure cookie và cache static asset |
 | `ADMIN_SETUP_TOKEN` | sinh ngẫu nhiên | Token tùy chọn để setup admin đầu tiên |
 

@@ -12,7 +12,7 @@ Website thư mời tốt nghiệp gồm trang chủ, thiệp cá nhân cho từn
 - Khách xác nhận tham dự, số người đi cùng và gửi lời chúc.
 - Admin quản lý khách, link thiệp, lượt xem, RSVP và lời chúc.
 - Avatar hỗ trợ URL ngoài hoặc upload JPG, PNG, WebP tối đa 5 MB.
-- Nhạc nền `nhac-nen.mp3` phát lặp ở âm lượng 80%, có nút SVG bật/tắt.
+- Nhạc nền `nhac-nen.mp3` phát lặp ở âm lượng 50%, có nút SVG bật/tắt.
 - Dữ liệu lưu bằng SQLite; không cần cài database server riêng.
 
 ## Yêu cầu

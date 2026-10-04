@@ -5,12 +5,15 @@ const express = require('express');
 const helmet = require('helmet');
 const multer = require('multer');
 const { rateLimit } = require('express-rate-limit');
+const compression = require('compression');
 const db = require('./server/database');
 const auth = require('./server/auth');
 const { clean, RESERVED_SLUGS, validateGuest } = require('./server/validation');
 
 const app = express();
+app.use(compression());
 const port = Number.parseInt(process.env.PORT, 10) || 3000;
+const host = process.env.HOST || '0.0.0.0';
 const rootDirectory = __dirname;
 const avatarDirectory = path.join(rootDirectory, 'uploads', 'avatars');
 fs.mkdirSync(avatarDirectory, { recursive: true });
@@ -33,6 +36,7 @@ const avatarUpload = multer({
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(rootDirectory, 'views'));
+app.set('trust proxy', 'loopback');
 app.disable('x-powered-by');
 app.locals.formatDate = (value) => value
   ? new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date(value))
@@ -276,7 +280,18 @@ app.use((request, response, next) => {
   return next();
 });
 
-app.use(express.static(rootDirectory, { dotfiles: 'ignore', index: 'index.html', maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0 }));
+app.use(express.static(rootDirectory, {
+  dotfiles: 'ignore',
+  index: 'index.html',
+  maxAge: '7d',
+  setHeaders: (response, filePath) => {
+    if (filePath.endsWith('.ttf') || filePath.endsWith('.png') || filePath.endsWith('.jpg') || filePath.endsWith('.webp') || filePath.endsWith('.mp3')) {
+      response.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+    } else if (filePath.endsWith('.css') || filePath.endsWith('.js')) {
+      response.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  },
+}));
 
 app.get('/:slug', (request, response, next) => {
   const slug = clean(request.params.slug, 100).toLocaleLowerCase('vi-VN');
@@ -305,7 +320,7 @@ app.use((error, request, response, _next) => {
   return response.status(500).render('invitation-not-found', { pageTitle: 'Đã xảy ra lỗi' });
 });
 
-app.listen(port, () => {
-  console.log(`Graduation website is running at http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Graduation website is running at http://${host}:${port}`);
   if (setupToken) console.log(`Create the first admin at http://localhost:${port}/admin/setup?token=${setupToken}`);
 });

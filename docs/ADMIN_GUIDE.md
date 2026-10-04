@@ -77,7 +77,7 @@ Admin có thể thay đổi trạng thái hoặc xóa vĩnh viễn. Hiện tại
 
 ## Nhạc nền
 
-Cả trang chủ và thiệp cá nhân dùng `/nhac-nen.mp3`, phát lặp với âm lượng 80%. Nút SVG trên thanh điều hướng cho phép bật/tắt.
+Cả trang chủ và thiệp cá nhân dùng `/nhac-nen.mp3`, phát lặp với âm lượng 50%. Nút SVG trên thanh điều hướng cho phép bật/tắt.
 
 Chrome, Safari và các trình duyệt di động có thể chặn autoplay có âm thanh. Khi đó hệ thống phát nhạc ở lần click, chạm hoặc nhấn phím đầu tiên. Đây là chính sách của trình duyệt, không phải lỗi server.
 

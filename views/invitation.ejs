@@ -9,7 +9,8 @@
   <meta property="og:description" content="Hẹn gặp bạn tại ngày lễ tốt nghiệp đáng nhớ của mình.">
   <% if (guest.avatarUrl) { %><meta property="og:image" content="<%= guest.avatarUrl %>"><% } %>
 
-  <!-- Google Fonts & Font Awesome Icons -->
+  <!-- Font Preload & Google Fonts -->
+  <link rel="preload" href="/Fz-Photograph.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Charm:wght@400;700&family=Cinzel:wght@700;800;900&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
@@ -105,13 +106,13 @@
         <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
         <span>GRADUATION 2026</span>
       </a>
-      <ul class="nav-links">
-        <li><a href="#hero">Thiệp Mời</a></li>
-        <li><a href="#details">Thông Tin</a></li>
-        <li><a href="#timeline">Lịch Trình</a></li>
-        <li><a href="#wishes">Lời Chúc</a></li>
-        <li><a href="#rsvp">Xác Nhận</a></li>
-        <li><a href="#location">Địa Điểm</a></li>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#hero"><i class="fas fa-envelope-open-text"></i> Thiệp Mời</a></li>
+        <li><a href="#details"><i class="fas fa-info-circle"></i> Thông Tin</a></li>
+        <li><a href="#timeline"><i class="fas fa-calendar-alt"></i> Lịch Trình</a></li>
+        <li><a href="#wishes"><i class="fas fa-comment-dots"></i> Lời Chúc</a></li>
+        <li><a href="#rsvp"><i class="fas fa-heart"></i> Phản Hồi</a></li>
+        <li><a href="#location"><i class="fas fa-map-marker-alt"></i> Địa Điểm</a></li>
       </ul>
       <div class="nav-actions">
         <button class="music-btn" id="music-toggle" type="button" title="Bật nhạc nền" aria-label="Bật nhạc nền" aria-pressed="false">
@@ -121,7 +122,12 @@
             <path d="m20.5 10-5 5"></path>
           </svg>
         </button>
-        <a href="#rsvp" class="btn-primary"><i class="fas fa-heart"></i> Phản Hồi Ngay</a>
+        <a href="#rsvp" class="btn-primary desktop-only-btn"><i class="fas fa-heart"></i> Phản Hồi Ngay</a>
+        <button class="mobile-menu-btn" id="mobile-menu-toggle" type="button" aria-label="Mở menu điều hướng" aria-expanded="false">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
       </div>
     </div>
   </nav>
@@ -393,11 +399,11 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
 
-  <audio id="background-music" src="/nhac-nen.mp3" autoplay loop preload="auto" playsinline></audio>
+  <audio id="background-music" src="/nhac-nen.mp3" loop preload="none" playsinline></audio>
 
   <!-- Main JavaScript Engine (Canvas, Parallax, Cursor, Countdown, Wishes) + Invitation Logic -->
-  <script src="/background-music.js"></script>
-  <script src="/main.js"></script>
-  <script src="/invitation.js"></script>
+  <script src="/background-music.js" defer></script>
+  <script src="/main.js" defer></script>
+  <script src="/invitation.js" defer></script>
 </body>
 </html>
